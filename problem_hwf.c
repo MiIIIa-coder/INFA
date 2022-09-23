@@ -12,7 +12,6 @@ int next_turn(int total, int possible)
 
     int t = total;
 
-    //заполняем массив fib числами Фибоначчи меньших total
     for(idx = 0; second < total;)
     {
         int tmp = second;
@@ -21,8 +20,6 @@ int next_turn(int total, int possible)
         if (second <= total)
             fib[++idx] = second;
     }
-
-    //разложим на сумму чисел Фибоначчи и выберем наименьшее возможное или 1
 
     while(t > 0)
     {
