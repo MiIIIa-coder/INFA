@@ -1,7 +1,30 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void greetings(void);
+int greetings(int *total, int *first_player, int *possible)
+{
+    printf("Enter initial number of matches\n");
+
+    if (scanf("%d", total) != 1)
+    {
+        printf("ERROR: invalid data\n");
+        return 1;
+    }
+
+    *possible = *total - 1;
+
+    printf("Who begins game\n");
+    printf("1 - you\n");
+    printf("2 - computer\n");
+
+    if (scanf("%d", first_player) != 1)
+    {
+        printf("ERROR: invalid data\n");
+        return 1;
+    }
+
+    return 0;
+}
 
 int next_turn(int total, int possible)
 {
@@ -40,25 +63,7 @@ int main()
     int count_mathes = 0;
     int count_mathes_comp = 0;
 
-    printf("Enter initial number of matches\n");
-
-    if (scanf("%d", &total) != 1)
-    {
-        printf("ERROR: invalid data\n");
-        return 1;
-    }
-
-    possible = total - 1;
-
-    printf("Who begins game\n");
-    printf("1 - you\n");
-    printf("2 - computer\n");
-
-    if (scanf("%d", &first_player) != 1)
-    {
-        printf("ERROR: invalid data\n");
-        return 1;
-    }
+    greetings(&total, &first_player, &possible);
 
     if (first_player == 1)
     {
