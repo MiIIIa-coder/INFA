@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Poly {
+    unsigned n;
+    unsigned *p;
+};
+
+struct Poly mult(struct Poly first, struct Poly second)
+{
+    unsigned i = 0;
+    unsigned j = 0;
+
+    struct Poly res = { first.n + second.n - 1, NULL };
+    res.p = calloc(res.n, sizeof(unsigned));
+    for (i = 0; i < first.n; ++i)
+        for (j = 0; j < second.n; ++j)
+            res.p[i + j] += first.p[i] * second.p[j];
+    return res;
+}
+
+int main()
+{
+    unsigned m = 0;
+    unsigned n = 0;
+    unsigned len = 0;
+
+    unsigned i = 0;
+
+    scanf("%u", &m);
+    scanf("%u", &n);
+
+    struct Poly first = { m, NULL };
+    first.p = calloc(m, sizeof(unsigned));
+
+    struct Poly second = { n, NULL };
+    second.p = calloc(n, sizeof(unsigned));
+
+    for (i = 0; i < m; ++i)
+        scanf("%u", first.p + i);
+
+    for (i = 0; i < n; ++i)
+        scanf("%u", second.p + i);
+
+    struct Poly res = mult(first, second);
+
+    len = m + n - 1;
+
+    for (i = len - 1; 0 < i; --i)
+        if (*(res.p + i) == 0)
+            len -= 1;
+        else
+            break;
+
+    for (i = 0; i < len; ++i)
+        printf("%u ", *(res.p + i));
+
+    return 0;
+}
