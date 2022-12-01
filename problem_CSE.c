@@ -56,7 +56,7 @@ int selstep(void *parr, int eltsize, int numelts, int nsorted, cmp_t cmp)
     small = (char *) malloc(eltsize);
     i = (char *) malloc(eltsize);
 
-    for (j = nsorted; j < (numelts - 1); j+= 1/*(прибавлять eltsize, а множители убрать лишние)*/) {
+    for (j = nsorted; j < (numelts - 1); j+= 1) {
 
         assignment(parr, small, j, eltsize);
         small_id = j;
