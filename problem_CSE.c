@@ -1,7 +1,13 @@
+#include <assert.h>
+#include <limits.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-typedef int (*cmp_t)(void const *lhs, void const *rhs);
+struct triple {
+    int x, y, z;
+};
 
 void my_swap(void *a, void *b, size_t eltsize)
 {
@@ -17,35 +23,47 @@ void my_swap(void *a, void *b, size_t eltsize)
 
 }
 
-int cmp(void const *lhs, void const *rhs)
+int tcmp(void const *key, void const *elt)
 {
-    int const *lhsi = (int const *) lhs;
-    int const *rhsi = (int const *) rhs;
+    struct triple const *lhs = (struct triple const *) key;
+    struct triple const *rhs = (struct triple const *) elt;
+    if (lhs->x == rhs->x && lhs->y == rhs->y)
+        return (lhs->z < rhs->z);
+    if (lhs->x == rhs->x)
+        return (lhs->y < rhs->y);
+    return (lhs->x < rhs->x);
+}
 
-    if (*lhsi < *rhsi)
-        return 1;
-    else
-        return 0;
+typedef int (*cmp_t)(const void *lhs, const void *rhs);
+
+void assignment(void *source, char *target, int idx_begin, int eltsize)
+{
+    int j1;
+
+    for (j1 = 0; j1 < eltsize; j1++)
+        target[j1] = *((char *) (source + eltsize * idx_begin) + j1);
+
 }
 
 int selstep(void *parr, int eltsize, int numelts, int nsorted, cmp_t cmp)
 {
 
-    char const *i;
+    char *i;
     int compare = -1;
-    int j, k, p, j1;
+    int j, k, p;
     int small_id;
     char *small;
     small = (char *) malloc(eltsize);
+    i = (char *) malloc(eltsize);
 
-    for (j = nsorted; j < (numelts - 1); j++) {
+    for (j = nsorted; j < (numelts - 1); j+= 1/*(прибавлять eltsize, а множители убрать лишние)*/) {
 
-        for (j1 = 0; j1 < eltsize; j1++)
-            small[j1] = *((char *) (parr + eltsize * j) + j1);
+        assignment(parr, small, j, eltsize);
         small_id = j;
 
-        for (i = (char const *) parr + (j + 1) * eltsize, k = j + 1;
-             k < (numelts); i += eltsize, k++) {
+        assignment(parr, i, j + 1, eltsize);
+
+        for (k = j + 1; k < numelts; k+= 1, assignment(parr, i, k, eltsize)) {
             compare = cmp((void const *) i, (void const *) small);
             if (compare == 1) {
                 for (p = 0; p < eltsize; p++)
@@ -54,8 +72,8 @@ int selstep(void *parr, int eltsize, int numelts, int nsorted, cmp_t cmp)
             }
         }
 
-        my_swap((void *) small, (parr + eltsize * (j)), sizeof(int));
-        my_swap((void *) small, (parr + eltsize * (small_id)), sizeof(int));
+        my_swap((void *) small, (parr + eltsize * (j)),        eltsize);
+        my_swap((void *) small, (parr + eltsize * (small_id)), eltsize);
 
     }
 
@@ -65,21 +83,29 @@ int selstep(void *parr, int eltsize, int numelts, int nsorted, cmp_t cmp)
 
 int main()
 {
-    int i;
-    int numelts = 11;
-    int eltsize = sizeof(int);
-    int nsorted = 0;
+    int i, res, n, last;
+    struct triple *parr;
 
-    //int parr[9] = { 2, 3, 4, 7, 5, 16, 9, 4, 5 };
+    res = scanf("%d", &n);
+    assert(res == 1);
+    assert(n > 2);
 
-    int parr[11] = {9, 7, 8, 9, 4, 5, 6, 1, 2, 3, 0 };
+    parr = (struct triple *) calloc(n / 3, sizeof(struct triple));
 
-    if (selstep(parr, eltsize, numelts, nsorted, cmp) == 0)
-        printf("VSO\n");
+    for (i = 0; i < n / 3; ++i) {
+        res = scanf("%d %d %d", &parr[i].x, &parr[i].y, &parr[i].z);
+        assert(res == 3);
+    }
 
-    for (i = 0; i < numelts; ++i)
-        printf("%d ", parr[i]);
+    res = scanf("%d", &last);
+    assert(res == 1);
+    assert(last < n);
 
+    selstep(parr, sizeof(struct triple), n / 3, last / 3, &tcmp);
 
+    for (i = 0; i < n / 3; ++i)
+        printf("%d %d %d\n", parr[i].x, parr[i].y, parr[i].z);
+
+    free(parr);
     return 0;
 }
