@@ -18,13 +18,8 @@ void eliminate(float *M, int N, int current, float val)
 
     for (i = current + 1; i < N; ++i) {
         frac = M[i * N + current] / M[current * N + current];
-        if (frac < 0)
-            frac = -frac;
         for (j = current; j < N; ++j) {
-            if ((M[i * N + j]) * (M[current * N + j]) >= 0)
-                M[i * N + j] -= (frac * M[current * N + j]);
-            else
-                M[i * N + j] += (frac * M[current * N + j]);
+            M[i * N + j] -= (frac * M[current * N + j]);
         }
     }
 }
