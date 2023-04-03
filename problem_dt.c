@@ -2,19 +2,19 @@
 #include <ctype.h>
 #include <stdlib.h>
 
-#define show 1
+#define show 0
 
 struct data_pivot {
-    float val;
+    double val;
     int col;
     int row;
 };
 
-void eliminate(float *M, int N, int current, float val)
+void eliminate(double *M, int N, int current, double val)
 {
     int i = 0;
     int j = 0;
-    float frac = 0;
+    double frac = 0;
 
     for (i = current + 1; i < N; ++i) {
         frac = M[i * N + current] / M[current * N + current];
@@ -24,10 +24,10 @@ void eliminate(float *M, int N, int current, float val)
     }
 }
 
-void swap_rows(float *M, int N, int current, int row)
+void swap_rows(double *M, int N, int current, int row)
 {
     int i = 0;
-    int tmp = 0;
+    double tmp = 0;
 
     for (i = current; i < N; ++i) {
         tmp = M[N * current + i];
@@ -37,10 +37,10 @@ void swap_rows(float *M, int N, int current, int row)
 
 }
 
-void swap_columns(float *M, int N, int current, int col)
+void swap_columns(double *M, int N, int current, int col)
 {
     int i = 0;
-    int tmp = 0;
+    double tmp = 0;
 
     for (i = current; i < N; ++i) {
         tmp = M[N * i + current];
@@ -50,7 +50,7 @@ void swap_columns(float *M, int N, int current, int col)
 
 }
 
-struct data_pivot max_submatrix_element(float *M, int N, int current)   //N - size_matrix
+struct data_pivot max_submatrix_element(double *M, int N, int current)	//N - size_matrix
 {
     int i = 0;
     int j = 0;
@@ -71,7 +71,7 @@ struct data_pivot max_submatrix_element(float *M, int N, int current)   //N - si
                 curr_pivot.col = j;
                 curr_pivot.row = i;
             } else if (-*(M + i * N + j) > curr_pivot.val
-                       && *(M + i * N + j) < 0) {
+                   && *(M + i * N + j) < 0) {
                 curr_pivot.val = -*(M + i * N + j);
                 curr_pivot.col = j;
                 curr_pivot.row = i;
@@ -83,27 +83,27 @@ struct data_pivot max_submatrix_element(float *M, int N, int current)   //N - si
 
 }
 
-void read_matrix(int N, float *M)
+void read_matrix(int N, double *M)
 {
     int i = 0;
     int j = 0;
 
     for (i = 0; i < N; ++i) {
         for (j = 0; j < N; ++j) {
-            scanf("%f", ((M + i * N) + j));     //M[i][j]
+            scanf("%lf", ((M + i * N) + j));	//M[i][j]
         }
     }
 
 }
 
-void pr_matrix(int N, float *M)
+void pr_matrix(int N, double *M)
 {
     int i = 0;
     int j = 0;
 
     for (i = 0; i < N; ++i) {
         for (j = 0; j < N; ++j) {
-            printf("%f ", *(M + i * N + j));    //M[i][j]
+            printf("%f ", *(M + i * N + j));	//M[i][j]
         }
         printf("\n");
     }
@@ -113,13 +113,13 @@ int main()
 {
     int current = 0;
     int N = 0;
-    float det = 1;
-    float *M;
+    double det = 1;
+    double *M;
 
     struct data_pivot pivot;
 
     scanf("%d", &N);
-    M = (float *) calloc(N * N, sizeof(float));
+    M = (double *) calloc(N * N, sizeof(double));
 
     read_matrix(N, M);
 #if show
@@ -129,26 +129,26 @@ int main()
 
     for (current = 0; current < N - 1; ++current) {
         pivot = max_submatrix_element(M, N, current);
-#if show
+        #if show
         printf("%f %d %d\n", pivot.val, pivot.col + 1, pivot.row + 1);
         printf("\n");
-#endif
+        #endif
 
         if (pivot.col != current) {
             swap_columns(M, N, current, pivot.col);
-#if show
+            #if show
             pr_matrix(N, M);
             printf("\n");
-#endif
+            #endif
             det *= -1;
         }
 
         if (pivot.row != current) {
             swap_rows(M, N, current, pivot.row);
-#if show
+            #if show
             pr_matrix(N, M);
             printf("\n");
-#endif
+            #endif
             det *= -1;
         }
 
@@ -157,10 +157,10 @@ int main()
             break;
         } else {
             eliminate(M, N, current, pivot.val);
-#if show
+            #if show
             pr_matrix(N, M);
             printf("\n");
-#endif
+            #endif
             det *= M[current * N + current];
         }
     }
